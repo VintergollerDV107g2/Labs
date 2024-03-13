@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New laboratory</title>
+    <link rel="shortcut icon" type="image" href="G:/МоёХтмл/Лаба10/kimdokja.jpg" />
+    <link rel="stylesheet" href="style1.css">
+</head>
+
+<body id="index">
+    <div id="myDIV" class="header">
+        <h2>Мой список дел</h2>
+        <input type="text" id="myInput" placeholder="Название...">
+        <span onclick="newElement()" class="addBtn">Добавить</span>
+        <span onclick="clearAll()" class="clearBtn">Очистить все</span>
+    </div>
+
+    <ul id="myUL">
+        <li>Организовать поставку вооружения</li>
+        <li>Подраться с китом</li>
+        <li>Выйти на забег с жирафом</li>
+    </ul>
+    <div class="indicators">
+    <p>Сделано: <span id="done">0</span></p>
+    <p>Не сделано: <span id="undone">3</span></p>
+    <p>Все: <span id="all">3</span></p>
+    <div class="sort">
+        <p>Сортировать:</p>
+        <button id="sortBtn">Самые новые</button>
+        <ul id="sortOptions">
+            <li>Самые новые</li>
+            <li>Самые старые</li>
+            <li>А-Я</li>
+            <li>Я-А</li>
+        </ul>
+    </div>
+</div>
+    <script>
+
+        var myNodelist = document.getElementsByTagName("LI");
+        var i;
+        for (i = 0; i < myNodelist.length; i++) {
+            var span = document.createElement("SPAN");
+            var txt = document.createTextNode("\u00D7");
+            span.className = "close";
+            span.appendChild(txt);
+            myNodelist[i].appendChild(span);
+        }
+
+
+        var close = document.getElementsByClassName("close");
+        var i;
+        for (i = 0; i < close.length; i++) {
+            close[i].onclick = function () {
+                var div = this.parentElement;
+                div.style.display = "none";
+            }
+        }
+
+
+        var list = document.querySelector('ul');
+        list.addEventListener('click', function (ev) {
+            if (ev.target.tagName === 'LI') {
+                ev.target.classList.toggle('checked');
+            }
+        }, false);
+
+        function newElement() {
+            var li = document.createElement("li");
+            var inputValue = document.getElementById("myInput").value;
+            var t = document.createTextNode(inputValue);
+            li.appendChild(t);
+            if (inputValue === '') {
+                alert("Вы должны что-то написать!");
+            } else {
+                document.getElementById("myUL").appendChild(li);
+            }
+            document.getElementById("myInput").value = "";
+
+            var span = document.createElement("SPAN");
+            var txt = document.createTextNode("\u00D7");
+            span.className = "close";
+            span.appendChild(txt);
+            li.appendChild(span);
+
+            for (i = 0; i < close.length; i++) {
+                close[i].onclick = function () {
+                    var div = this.parentElement;
+                    div.style.display = "none";
+                }
+            }
+        }
+        function clearAll() {
+            var myNodelist = document.getElementsByTagName("LI");
+            for (i = 0; i < myNodelist.length; i++) {
+                myNodelist[i].style.display = "none";
+            }
+        }
+        function updateIndicators() {
+            var done = document.getElementById("done");
+            var undone = document.getElementById("undone");
+            var all = document.getElementById("all");
+
+            done.innerHTML = document.querySelectorAll('li.checked').length;
+            undone.innerHTML = document.querySelectorAll('li:not(.checked)').length;
+            all.innerHTML = myNodelist.length;
+        }
+        var sortBtn = document.getElementById("sortBtn");
+        var sortOptions = document.getElementById("sortOptions");
+
+        sortBtn.addEventListener('click', function () {
+            sortOptions.classList.toggle('active');
+        });
+
+        sortOptions.addEventListener('click', function (e) {
+            var option = e.target.innerHTML;
+            sortBtn.innerHTML = option;
+            sortOptions.classList.remove('active');
+
+            var items = document.querySelectorAll('li');
+            var sortedItems;
+
+            switch (option) {
+                case 'Самые новые':
+                    sortedItems = [...items].sort((a, b) => b.dataset.id - a.dataset.id);
+                    break;
+                case 'Самые старые':
+                    sortedItems = [...items].sort((a, b) => a.dataset.id - b.dataset.id);
+                    break;
+                case 'А-Я':
+                    sortedItems = [...items].sort((a, b) => a.innerHTML.localeCompare(b.innerHTML));
+                    break;
+                case 'Я-А':
+                    sortedItems = [...items].sort((a, b) => b.innerHTML.localeCompare(a.innerHTML));
+                    break;
+            }
+
+            items.forEach(item => item.remove());
+            sortedItems.forEach(item => myUL.appendChild(item));
+        });
+    </script>
+
+</body>
+<hr>
+<p style="text-align: center;">Copyright &copy; 2023</p>
+
+</html>
